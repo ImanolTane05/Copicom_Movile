@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, ActivityIndicator, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
-// Datos de Prueba (Reemplazar con llamada a API real)
 const MOCK_NOTIFICACIONES = [
     { id: '1', titulo: 'Nueva Encuesta Disponible', descripcion: 'Responde la encuesta de Satisfacción Laboral.', fecha: 'Hace 5 min', leida: false },
     { id: '2', titulo: 'Alerta de Servidor', descripcion: 'Mantenimiento programado para esta noche.', fecha: 'Hace 3 horas', leida: false },
@@ -16,11 +15,11 @@ const NotificationsScreen = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // Simulación de carga desde API (Reemplazar por fetchNotificaciones real)
+        
         const loadNotificaciones = async () => {
             setLoading(true);
             try {
-                // Simula un retraso de red
+                
                 await new Promise(resolve => setTimeout(resolve, 800)); 
                 setNotificaciones(MOCK_NOTIFICACIONES); 
             } catch (error) {
@@ -36,7 +35,7 @@ const NotificationsScreen = () => {
     const renderItem = ({ item }) => (
         <TouchableOpacity 
             style={[styles.notificationItem, item.leida ? styles.leida : styles.noLeida]}
-            // Aquí iría la lógica para marcar como leída o navegar a detalle
+           
             onPress={() => console.log('Notificación presionada:', item.id)}
         >
             <Ionicons 

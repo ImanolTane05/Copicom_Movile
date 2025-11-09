@@ -28,7 +28,6 @@ const PollStack = () => {
       <Stack.Screen 
         name="PollDetail" 
         component={PollDetailScreen} 
-        // El título se establecerá dinámicamente desde la pantalla de detalle
         options={{ title: 'Responder Encuesta' }} 
       />
     </Stack.Navigator>

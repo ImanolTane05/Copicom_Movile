@@ -6,11 +6,10 @@ import {
     ActivityIndicator, 
     StyleSheet, 
     TouchableOpacity,
-    RefreshControl // Importado para el pull-to-refresh
+    RefreshControl 
 } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
-// Asegúrate que esta ruta sea correcta:
 import { fetchEncuestasActivas } from '../api'; 
 
 // Componente para renderizar cada item de la encuesta de forma optimizada
@@ -38,13 +37,12 @@ const PollsListScreen = () => {
     const [isRefreshing, setIsRefreshing] = useState(false);
 
     const loadEncuestas = async () => {
-        // Establecer loading y refreshing
+        // Establece loading y refreshing
         if (!isRefreshing) setLoading(true);
         setIsRefreshing(true);
         setError(null);
         try {
             const data = await fetchEncuestasActivas();
-            // Filtra encuestas válidas (que tengan preguntas)
             const validEncuestas = data.filter(e => e.preguntas && Array.isArray(e.preguntas) && e.preguntas.length > 0);
             setEncuestas(validEncuestas);
         } catch (err) {
@@ -56,11 +54,10 @@ const PollsListScreen = () => {
         }
     };
 
-    // CLAVE: useFocusEffect para recargar la lista cada vez que la pantalla se enfoca
+    
     useFocusEffect(
         React.useCallback(() => {
             loadEncuestas();
-            // La función de limpieza (return) es opcional aquí, pero es buena práctica
             return () => {}; 
         }, [])
     );
@@ -79,7 +76,7 @@ const PollsListScreen = () => {
         />
     );
 
-    // Estado de Carga Inicial
+
     if (loading && !isRefreshing) {
         return (
             <View style={styles.centered}>
@@ -89,7 +86,7 @@ const PollsListScreen = () => {
         );
     }
 
-    // Manejo de Errores o Lista Vacía (con Pull to Refresh)
+ 
     const emptyOrErrorContent = (
         <View style={styles.centeredEmpty}>
             {error ? (
@@ -112,7 +109,7 @@ const PollsListScreen = () => {
             <FlatList
                 data={[]}
                 keyExtractor={() => "empty"}
-                renderItem={() => null} // No renderiza items, solo el contenido vacío
+                renderItem={() => null} 
                 ListEmptyComponent={emptyOrErrorContent}
                 contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}
                 refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={loadEncuestas} tintColor="#013D6B" />}
@@ -128,7 +125,6 @@ const PollsListScreen = () => {
                 keyExtractor={item => item._id}
                 renderItem={renderItem}
                 contentContainerStyle={styles.listContent}
-                // Implementación del Pull to Refresh
                 refreshControl={
                     <RefreshControl refreshing={isRefreshing} onRefresh={loadEncuestas} tintColor="#013D6B" />
                 }
@@ -157,7 +153,7 @@ const styles = StyleSheet.create({
         shadowRadius: 4,
         elevation: 3,
         borderLeftWidth: 5,
-        borderLeftColor: '#00A859', // Verde de la marca
+        borderLeftColor: '#00A859', 
     },
     cardHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 8 },
     title: { fontSize: 18, fontWeight: '700', color: '#013D6B', flex: 1 },

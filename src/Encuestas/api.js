@@ -1,8 +1,7 @@
-// Asegúrate de que API_BASE_URL esté correctamente definido en:
 import { API_BASE_URL } from '../utils/constants'; 
 import { MOCK_ENCUESTAS, getMockEncuestaById } from '../utils/mockData';
 
-// 1. OBTENER LISTA DE ENCUESTAS ACTIVAS (CON FALLBACK)
+//OBTENER LISTA DE ENCUESTAS ACTIVAS 
 export const fetchEncuestasActivas = async () => {
     try {
         const response = await fetch(`${API_BASE_URL}/encuestas`); 
@@ -15,12 +14,12 @@ export const fetchEncuestasActivas = async () => {
         } 
         return Array.isArray(data) ? data : []; 
     } catch (error) {
-        console.warn("ADVERTENCIA: Falló la conexión al backend. Usando datos de reserva (MOCK).", error.message);
+        console.warn("fallo desde el back", error.message);
         return MOCK_ENCUESTAS; 
     }
 };
 
-// 2. OBTENER DETALLE DE ENCUESTA POR ID (CON FALLBACK)
+// OBTENER DETALLE DE ENCUESTA POR ID
 export const fetchEncuestaById = async (id) => {
     try {
         const response = await fetch(`${API_BASE_URL}/encuestas/${id}`); 
@@ -39,10 +38,10 @@ export const fetchEncuestaById = async (id) => {
     }
 };
 
-// 3. SUBIR RESPUESTAS (CORRECCIÓN FINAL)
-export const submitRespuestas = async (encuestaId, respuestasArray) => { // Renombrado a respuestasArray para claridad
+// SUBIR RESPUESTAS
+export const submitRespuestas = async (encuestaId, respuestasArray) => { 
     try {
-        const bodyPayload = { respuestas: respuestasArray }; // 🔑 CLAVE: Envuelto en el objeto 'respuestas'
+        const bodyPayload = { respuestas: respuestasArray }; 
         
         console.log("Enviando payload al servidor:", JSON.stringify(bodyPayload, null, 2));
 
@@ -59,7 +58,7 @@ export const submitRespuestas = async (encuestaId, respuestasArray) => { // Reno
             try {
                 errorData = await response.json();
             } catch (e) {
-                // Si el servidor no envía JSON, lanzamos error genérico
+                
                 throw new Error(`Error ${response.status}: El servidor no devolvió un error legible.`); 
             }
             throw new Error(errorData.error || errorData.mensaje || `Error ${response.status}: Error desconocido del servidor.`);

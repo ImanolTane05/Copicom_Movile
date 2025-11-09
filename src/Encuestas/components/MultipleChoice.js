@@ -1,10 +1,8 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-// Asegúrate de tener instalado react-native-vector-icons
 import Icon from 'react-native-vector-icons/MaterialIcons'; 
 
 const MultipleChoice = ({ pregunta, respuestaActual, onToggleOption }) => {
-  // Aseguramos que respuestaActual sea un array para verificar la selección
   const isSelected = (opcion) => Array.isArray(respuestaActual) && respuestaActual.includes(opcion);
 
   return (

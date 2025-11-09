@@ -9,7 +9,6 @@ import {
   TouchableOpacity 
 } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
-// Rutas corregidas asumiendo la estructura: Encuestas/screens/PollDetailScreen.js
 import { fetchEncuestaById, submitRespuestas } from '../api'; 
 import MultipleChoice from '../components/MultipleChoice';
 import OpenText from '../components/OpenText';
@@ -24,7 +23,7 @@ const PollDetailScreen = ({ navigation }) => {
   const [respuestas, setRespuestas] = useState({}); 
   const [error, setError] = useState(null);
 
-  // 1. Configurar Título y Cargar Encuesta
+  // Configurar Título y Cargar Encuesta
   useEffect(() => {
     if (titulo) {
       navigation.setOptions({ title: titulo });
@@ -57,7 +56,7 @@ const PollDetailScreen = ({ navigation }) => {
 
       } catch (err) {
         console.error("Error al cargar encuesta:", err);
-        setError(err.message || "No se pudo cargar la encuesta. Revisa la conexión y la IP.");
+        setError(err.message || "No se pudo cargar la encuesta. Revisa la conexión.");
       } finally {
         setLoading(false);
       }
@@ -80,7 +79,7 @@ const PollDetailScreen = ({ navigation }) => {
     });
   }, []);
 
-  // 3. Validación y Envío (Lógica CLAVE CORREGIDA)
+  // Validación y Envío 
   const handleSubmit = async () => {
     if (!encuesta || !encuesta.preguntas) {
         Alert.alert("Error", "La encuesta no se ha cargado correctamente.");
@@ -109,7 +108,7 @@ const PollDetailScreen = ({ navigation }) => {
                 validationErrors.push(`- La pregunta "${q.texto}" es obligatoria.`);
             }
 
-            // Solo agrega respuestas al payload si fueron respondidas
+            
             if (isAnswered) {
                  respuestasParaEnviar.push({
                     preguntaId: q._id,
@@ -124,7 +123,7 @@ const PollDetailScreen = ({ navigation }) => {
       return;
     }
     
-    // DETIENE el envío si no hay ninguna respuesta para evitar el error del backend
+    
     if (respuestasParaEnviar.length === 0) {
         Alert.alert("Sin respuestas", "Debes responder al menos una pregunta para poder enviar la encuesta.");
         return; 
@@ -133,11 +132,11 @@ const PollDetailScreen = ({ navigation }) => {
     setSubmitting(true);
     
     try {
-      // Envía el array limpio a la API, la API lo envolverá en { respuestas: [...] }
+      
       await submitRespuestas(encuestaId, respuestasParaEnviar); 
 
       Alert.alert(
-        "¡Respuestas Enviadas! 🎉", 
+        "¡Respuestas Enviadas!", 
         "Gracias por participar en nuestra encuesta. Sus respuestas fueron registradas con éxito.",
         [{ text: "OK", onPress: () => navigation.goBack() }]
       );
@@ -149,7 +148,7 @@ const PollDetailScreen = ({ navigation }) => {
     }
   };
 
-  // 4. Renderizado
+  // Renderizado
   if (loading) {
     return (
       <View style={styles.centered}>

@@ -1,4 +1,3 @@
-// --- Modelo de Datos Mock de Encuestas ---
 
 export const MOCK_ENCUESTAS = [
   {
@@ -11,7 +10,7 @@ export const MOCK_ENCUESTAS = [
       {
         "_id": "mock_q_1_1",
         "texto": "¿Cómo calificaría la calidad del periodismo local?",
-        "tipo": "multiple", // Tipo: Selección de opciones
+        "tipo": "multiple", 
         "opciones": ["Excelente", "Buena", "Regular", "Deficiente"],
         "obligatoria": true,
         "orden": 1
@@ -19,7 +18,7 @@ export const MOCK_ENCUESTAS = [
       {
         "_id": "mock_q_1_2",
         "texto": "¿Qué sugerencias tiene para mejorar el periodismo?",
-        "tipo": "abierta", // Tipo: Campo de texto
+        "tipo": "abierta", 
         "opciones": [],
         "obligatoria": false,
         "orden": 2
@@ -45,10 +44,9 @@ export const MOCK_ENCUESTAS = [
   },
 ];
 
-// Función para simular la obtención de una encuesta por ID
+
 export const getMockEncuestaById = (id) => {
   return MOCK_ENCUESTAS.find(encuesta => encuesta._id === id);
 };
 
-// Se requiere al menos un array vacío de MOCK_NOTICIAS para evitar errores futuros
 export const MOCK_NOTICIAS = [];

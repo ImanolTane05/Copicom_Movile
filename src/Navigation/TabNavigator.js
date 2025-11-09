@@ -1,11 +1,9 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
-import { StyleSheet } from 'react-native'; // Importamos StyleSheet
-
-// Importa las pantallas
+import { StyleSheet } from 'react-native'; 
 import NewsListScreen from '../Noticias/screens/NewsListScreen';
-import PollStack from './PollStack'; // Asume que este Stack está en el mismo nivel
+import PollStack from './PollStack';
 import NotificationsScreen from '../Notificaciones/screens/NotificationsScreen';
 
 const Tab = createBottomTabNavigator();
@@ -16,13 +14,11 @@ const TabNavigator = () => {
       screenOptions={({ route }) => ({
         headerShown: false, 
         tabBarShowLabel: true,
-        tabBarActiveTintColor: '#013D6B', // Color activo (Azul)
+        tabBarActiveTintColor: '#013D6B', 
         tabBarInactiveTintColor: 'gray',
         
-        // --- ESTILO DE BARRA PASTILLA ---
         tabBarStyle: styles.tabBar,
         tabBarLabelStyle: styles.tabBarLabel,
-        // --- FIN ESTILO ---
 
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
@@ -54,22 +50,22 @@ const TabNavigator = () => {
   );
 };
 
-// Estilos para la barra de navegación "Pastilla"
+
 const styles = StyleSheet.create({
     tabBar: {
-        position: 'absolute', // Flota sobre el contenido
-        bottom: 25, // Margen inferior
-        left: 20, // Margen izquierdo
-        right: 20, // Margen derecho
+        position: 'absolute',
+        bottom: 25, 
+        left: 20, 
+        right: 20, 
         elevation: 5, // Sombra para Android
         shadowColor: '#000', // Sombra para iOS
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.15,
         shadowRadius: 5,
-        backgroundColor: 'rgba(255, 255, 255, 0.9)', // Blanco con ligera transparencia (efecto liquid/glass)
-        borderRadius: 30, // Bordes redondeados para la forma de pastilla
-        height: 65, // Altura de la barra
-        borderTopWidth: 0, // Quita el borde superior por defecto
+        backgroundColor: 'rgba(255, 255, 255, 0.9)', 
+        borderRadius: 30, 
+        height: 65, 
+        borderTopWidth: 0, 
         paddingBottom: 5, 
         paddingTop: 5,
     },

@@ -1,8 +1,9 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
-import { StyleSheet } from 'react-native'; 
-import NewsListScreen from '../Noticias/screens/NewsListScreen';
+import { StyleSheet } from 'react-native';
+
+import NewsStack from './NewsStack';
 import PollStack from './PollStack';
 import NotificationsScreen from '../Notificaciones/screens/NotificationsScreen';
 
@@ -12,11 +13,10 @@ const TabNavigator = () => {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
-        headerShown: false, 
+        headerShown: false,
         tabBarShowLabel: true,
-        tabBarActiveTintColor: '#013D6B', 
+        tabBarActiveTintColor: '#013D6B',
         tabBarInactiveTintColor: 'gray',
-        
         tabBarStyle: styles.tabBar,
         tabBarLabelStyle: styles.tabBarLabel,
 
@@ -35,43 +35,42 @@ const TabNavigator = () => {
         },
       })}
     >
-      <Tab.Screen name="Noticias" component={NewsListScreen} />
-      
-      <Tab.Screen 
-        name="Encuestas" 
-        component={PollStack} 
-        options={{ 
-            headerShown: false
-        }} 
-      /> 
-      
+      <Tab.Screen name="Noticias" component={NewsStack} />
+
+      <Tab.Screen
+        name="Encuestas"
+        component={PollStack}
+        options={{
+          headerShown: false,
+        }}
+      />
+
       <Tab.Screen name="Alertas" component={NotificationsScreen} />
     </Tab.Navigator>
   );
 };
 
-
 const styles = StyleSheet.create({
-    tabBar: {
-        position: 'absolute',
-        bottom: 25, 
-        left: 20, 
-        right: 20, 
-        elevation: 5, // Sombra para Android
-        shadowColor: '#000', // Sombra para iOS
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.15,
-        shadowRadius: 5,
-        backgroundColor: 'rgba(255, 255, 255, 0.9)', 
-        borderRadius: 30, 
-        height: 65, 
-        borderTopWidth: 0, 
-        paddingBottom: 5, 
-        paddingTop: 5,
-    },
-    tabBarLabel: {
-        fontSize: 11,
-    }
+  tabBar: {
+    position: 'absolute',
+    bottom: 25,
+    left: 20,
+    right: 20,
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 5,
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    borderRadius: 30,
+    height: 65,
+    borderTopWidth: 0,
+    paddingBottom: 5,
+    paddingTop: 5,
+  },
+  tabBarLabel: {
+    fontSize: 11,
+  },
 });
 
 export default TabNavigator;

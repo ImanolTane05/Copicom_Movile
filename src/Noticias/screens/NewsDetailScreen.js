@@ -2,16 +2,41 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, ActivityIndicator, Image, Dimensions } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import { fetchNewsDetail } from '../api';
-import RenderHtml from 'react-native-render-html'; // Para renderizar el cuerpo si es HTML
+import RenderHtml from 'react-native-render-html';
 
 const { width } = Dimensions.get('window');
 
 const NewsDetailScreen = ({ navigation }) => {
     const route = useRoute();
-    const { newsId, title: initialTitle } = route.params || {}; 
+    const { newsId, title: initialTitle } = route.params || {};
     const [article, setArticle] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+
+    // --- 🔥 FUNCION PARA LIMPIAR CUERPOS JSON (EditorJS, Lexical, DraftJS) ---
+    const parseBodyIfJSON = (body) => {
+        try {
+            const parsed = JSON.parse(body);
+
+            if (parsed?.root?.children) {
+                let text = "";
+
+                parsed.root.children.forEach(block => {
+                    if (block.children) {
+                        block.children.forEach(ch => {
+                            if (ch.text) text += ch.text + "\n\n";
+                        });
+                    }
+                });
+
+                return text.trim();
+            }
+
+            return body; 
+        } catch {
+            return body; 
+        }
+    };
 
     useEffect(() => {
         if (initialTitle) navigation.setOptions({ title: initialTitle });
@@ -22,9 +47,14 @@ const NewsDetailScreen = ({ navigation }) => {
                 setLoading(false);
                 return;
             }
+
             try {
                 const data = await fetchNewsDetail(newsId);
-                setArticle(data);
+
+                const cleanedBody = parseBodyIfJSON(data.body);
+
+                setArticle({ ...data, body: cleanedBody });
+
                 navigation.setOptions({ title: data.title || 'Detalle de Noticia' });
             } catch (err) {
                 setError(err.message || "Ocurrió un error al cargar el artículo.");
@@ -35,27 +65,10 @@ const NewsDetailScreen = ({ navigation }) => {
 
         loadDetail();
     }, [newsId, initialTitle, navigation]);
-    
-    // Configuración para RenderHtml
-    const renderConfig = {
-        baseStyle: { 
-            fontSize: 16, 
-            lineHeight: 24, 
-            color: '#333' 
-        },
-        tagsStyles: {
-            p: { marginBottom: 15 },
-            h1: { fontSize: 24, fontWeight: 'bold', marginTop: 15, marginBottom: 10, color: '#013D6B' },
-            h2: { fontSize: 20, fontWeight: 'bold', marginTop: 10, marginBottom: 8, color: '#013D6B' },
-            img: { // Ajusta las imágenes para que se vean bien
-                maxWidth: width - 40,
-                height: 'auto',
-                resizeMode: 'contain',
-                marginVertical: 10
-            }
-        }
-    };
 
+    const renderConfig = {
+        baseStyle: { fontSize: 16, lineHeight: 24, color: '#333' },
+    };
 
     if (loading) {
         return (
@@ -74,37 +87,42 @@ const NewsDetailScreen = ({ navigation }) => {
         );
     }
 
-    // Formatear la fecha
-    const formattedDate = article?.publishedDate ? 
-        new Date(article.publishedDate).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' }) : 
-        'Fecha desconocida';
+    const formattedDate = article?.publishedDate ?
+        new Date(article.publishedDate).toLocaleDateString('es-ES', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric'
+        })
+        : 'Fecha desconocida';
+
+    const isHTML = article.body?.includes("<p") || article.body?.includes("<div") || article.body?.includes("<h");
 
     return (
         <ScrollView style={styles.container} contentContainerStyle={styles.content}>
             <Text style={styles.title}>{article.title}</Text>
             <Text style={styles.date}>Publicado el {formattedDate}</Text>
-            
+
             {article.headerPic && (
-                <Image 
-                    source={{ uri: article.headerPic }} 
-                    style={styles.headerImage} 
+                <Image
+                    source={{ uri: article.headerPic }}
+                    style={styles.headerImage}
                     resizeMode="cover"
                 />
             )}
 
             <Text style={styles.lead}>{article.lead}</Text>
 
-            {/* Renderizar el cuerpo con RenderHtml (asumiendo que puede ser HTML) */}
-            {article.body && (
-                <View style={styles.bodyContainer}>
-                     <RenderHtml
+            <View style={styles.bodyContainer}>
+                {isHTML ? (
+                    <RenderHtml
                         contentWidth={width}
                         source={{ html: article.body }}
-                        tagsStyles={renderConfig.tagsStyles}
                         baseStyle={renderConfig.baseStyle}
                     />
-                </View>
-            )}
+                ) : (
+                    <Text style={styles.bodyText}>{article.body}</Text>
+                )}
+            </View>
         </ScrollView>
     );
 };
@@ -113,11 +131,11 @@ const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: '#fff' },
     content: { padding: 20, paddingBottom: 50 },
     center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-    title: { 
-        fontSize: 26, 
-        fontWeight: 'bold', 
-        color: '#013D6B', 
-        marginBottom: 10 
+    title: {
+        fontSize: 26,
+        fontWeight: 'bold',
+        color: '#013D6B',
+        marginBottom: 10
     },
     date: {
         fontSize: 14,
@@ -129,7 +147,7 @@ const styles = StyleSheet.create({
     },
     headerImage: {
         width: '100%',
-        height: 250, // Altura fija para la imagen destacada
+        height: 250,
         borderRadius: 8,
         marginBottom: 20,
     },
@@ -143,8 +161,11 @@ const styles = StyleSheet.create({
         borderLeftColor: '#00A859',
         paddingLeft: 10,
     },
-    bodyContainer: {
-        marginTop: 10,
+    bodyContainer: { marginTop: 10 },
+    bodyText: {
+        fontSize: 16,
+        lineHeight: 26,
+        color: '#444'
     },
     text: { color: '#333', marginTop: 10 },
     errorText: { color: 'red', fontSize: 16, textAlign: 'center' },

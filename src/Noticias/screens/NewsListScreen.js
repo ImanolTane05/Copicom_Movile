@@ -127,7 +127,7 @@ const styles = StyleSheet.create({
     headerContainer: {
         paddingHorizontal: 15,
         marginBottom: 20,
-        marginTop: 20,       // 🔥 esto baja el header
+        marginTop: 20,       
         paddingTop: 5,
     },
 

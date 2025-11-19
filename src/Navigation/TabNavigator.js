@@ -16,7 +16,7 @@ const TabNavigator = () => {
         headerShown: false,
         tabBarShowLabel: true,
         tabBarActiveTintColor: '#013D6B',
-        tabBarInactiveTintColor: 'gray',
+        tabBarInactiveTintColor: '#777',
         tabBarStyle: styles.tabBar,
         tabBarLabelStyle: styles.tabBarLabel,
 
@@ -51,25 +51,41 @@ const TabNavigator = () => {
 };
 
 const styles = StyleSheet.create({
+  /** 
+   * 🔥 Barra más elegante, más pequeña y super centrada REAL
+   * Funciona aunque tus pantallas tengan padding horizontal.
+   */
   tabBar: {
     position: 'absolute',
-    bottom: 25,
-    left: 20,
-    right: 20,
-    elevation: 5,
+
+    // 💫 MÁS SEPARACIÓN LATERAL REAL
+    left: 60,
+    right: 60,
+
+    // 💫 Separación vertical perfecta
+    bottom: 24,
+
+    // 💫 Estética más compacta
+    height: 54,
+    borderRadius: 26,
+    backgroundColor: 'rgba(255, 255, 255, 0.93)',
+
+    // Sombras estilo iOS
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.15,
-    shadowRadius: 5,
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
-    borderRadius: 30,
-    height: 65,
+    shadowRadius: 4,
+    elevation: 6,
+
     borderTopWidth: 0,
-    paddingBottom: 5,
-    paddingTop: 5,
+    paddingBottom: 4,
+    paddingTop: 4,
   },
+
   tabBarLabel: {
-    fontSize: 11,
+    fontSize: 10,
+    marginBottom: 1,
+    fontWeight: '500',
   },
 });
 

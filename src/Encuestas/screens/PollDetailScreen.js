@@ -23,7 +23,7 @@ const PollDetailScreen = ({ navigation }) => {
   const [respuestas, setRespuestas] = useState({}); 
   const [error, setError] = useState(null);
 
-  // ✅ CARGA DE ENCUESTA
+  // CARGA DE ENCUESTA
   useEffect(() => {
     if (titulo) navigation.setOptions({ title: titulo });
 
@@ -45,13 +45,13 @@ const PollDetailScreen = ({ navigation }) => {
           const tipoPregunta = q.tipo?.toLowerCase().replace(/\s/g, '');
 
           if (tipoPregunta === 'opciónmúltiple' || tipoPregunta === 'checkbox') {
-            initialResponses[q._id] = [];     // ✅ MULTIPLE
+            initialResponses[q._id] = []; 
           } 
           else if (tipoPregunta === 'cerrada' || tipoPregunta === 'radio') {
-            initialResponses[q._id] = null;   // ✅ CERRADA (UNA)
+            initialResponses[q._id] = null; 
           } 
           else {
-            initialResponses[q._id] = '';     // ✅ ABIERTA
+            initialResponses[q._id] = ''; 
           }
         });
 
@@ -66,12 +66,12 @@ const PollDetailScreen = ({ navigation }) => {
     loadEncuesta();
   }, [encuestaId, titulo, navigation]);
 
-  // ✅ ABIERTA
+  // ABIERTA
   const handleOpenTextChange = useCallback((preguntaId, text) => {
     setRespuestas(prev => ({ ...prev, [preguntaId]: text }));
   }, []);
 
-  // ✅ OPCIÓN MÚLTIPLE
+  // OPCIÓN MÚLTIPLE
   const handleMultipleOption = useCallback((preguntaId, option) => {
     setRespuestas(prev => {
       const current = Array.isArray(prev[preguntaId]) ? prev[preguntaId] : [];
@@ -83,17 +83,18 @@ const PollDetailScreen = ({ navigation }) => {
     });
   }, []);
 
-  // ✅ CERRADA (UNA SOLA)
+  // CERRADA (UNA SOLA)
   const handleSingleOption = useCallback((preguntaId, option) => {
     setRespuestas(prev => ({ ...prev, [preguntaId]: option }));
   }, []);
 
-  // ✅ ENVÍO
+  // ENVÍO CORREGIDO: Usamos popToTop()
   const handleSubmit = async () => {
     let hasError = false;
     const errores = [];
     const respuestasParaEnviar = [];
 
+    // --- Lógica de Validación (Correcta) ---
     encuesta?.preguntas?.forEach(q => {
       const respuesta = respuestas[q._id];
 
@@ -121,21 +122,25 @@ const PollDetailScreen = ({ navigation }) => {
       Alert.alert("Errores", errores.join('\n'));
       return;
     }
+    // --- Fin Lógica de Validación ---
 
     setSubmitting(true);
     try {
       await submitRespuestas(encuestaId, respuestasParaEnviar);
-      Alert.alert("✅ Enviado", "Gracias por responder", [
-        { text: "OK", onPress: () => navigation.goBack() }
-      ]);
-    } catch {
-      Alert.alert("Error", "No se pudo enviar");
+      
+    
+      Alert.alert("✅ Enviado", "Gracias por responder"); 
+      
+      navigation.popToTop(); 
+
+    } catch (error) {
+      Alert.alert("Error", error.message || "No se pudo enviar la respuesta.");
     } finally {
       setSubmitting(false);
     }
   };
 
-  // ✅ RENDERS
+  // RENDERIZADO
   if (loading) return (
     <View style={styles.centered}>
       <ActivityIndicator size="large" color="#013D6B" />
@@ -157,7 +162,7 @@ const PollDetailScreen = ({ navigation }) => {
         {encuesta?.preguntas?.map((pregunta) => {
           const tipo = pregunta.tipo?.toLowerCase().replace(/\s/g, '');
 
-          // ✅ OPCIÓN MÚLTIPLE
+          // OPCIÓN MÚLTIPLE
           if (tipo === 'opciónmúltiple' || tipo === 'checkbox') {
             return (
               <MultipleChoice
@@ -170,7 +175,7 @@ const PollDetailScreen = ({ navigation }) => {
             );
           }
 
-          // ✅ CERRADA
+          // CERRADA
           if (tipo === 'cerrada' || tipo === 'radio') {
             return (
               <MultipleChoice
@@ -183,7 +188,7 @@ const PollDetailScreen = ({ navigation }) => {
             );
           }
 
-          // ✅ ABIERTA
+          // ABIERTA
           if (tipo === 'abierta') {
             return (
               <OpenText

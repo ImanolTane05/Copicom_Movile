@@ -16,9 +16,7 @@ import { fetchNotifications } from '../api';
 import { loadLocalNotifications, saveLocalNotifications } from '../storage';
 import { getInstallTime } from '../installTime';
 
-/**
- * Convierte fechas a formato "hace X"
- */
+
 const formatTimeAgo = (dateString) => {
     try {
         const now = new Date();
@@ -41,9 +39,7 @@ const formatTimeAgo = (dateString) => {
     }
 };
 
-/**
- * NORMALIZACIÓN REAL + IDs PARA NAVEGAR
- */
+
 const normalizeApiData = (data) => {
     return data.map(n => ({
         id: String(n._id || Date.now()),
@@ -53,7 +49,7 @@ const normalizeApiData = (data) => {
         tipo: (n.tipo || "Alerta").toLowerCase(),
         leida: n.leida || false,
 
-        // 🔥 IDs reales para navegar
+      
         noticiaId: n.noticiaId || n.linkId || null,
         encuestaId: n.encuestaId || n.linkId || null,
     }));
@@ -146,8 +142,9 @@ const NotificationsScreen = () => {
         return () => subscription.remove();
     }, [notificaciones]);
 
-    /** NAVEGACIÓN AL PRESIONAR NOTIFICACIÓN */
+    /** NAVEGACIÓN AL PRESIONAR NOTIFICACIÓN (CORREGIDO) */
     const onPressNotification = (item) => {
+        // 1. Marcar como leída visualmente
         const updated = notificaciones.map(n =>
             n.id === item.id ? { ...n, leida: true } : n
         );
@@ -157,15 +154,28 @@ const NotificationsScreen = () => {
 
         const tipo = item.tipo.toLowerCase();
 
+        // ✅ CORRECCIÓN: Navegación anidada hacia el Tab 'Noticias'
         if (tipo === "noticia" && item.noticiaId) {
             console.log("➡️ Navegando a noticia:", item.noticiaId);
-            navigation.navigate("NewsDetail", { newsId: item.noticiaId });
+            
+            navigation.navigate("Noticias", {
+                screen: "NewsDetail",
+                params: { newsId: item.noticiaId } 
+            });
             return;
         }
 
+        // ✅ CORRECCIÓN: Navegación anidada hacia el Tab 'Encuestas'
         if (tipo === "encuesta" && item.encuestaId) {
             console.log("➡️ Navegando a encuesta:", item.encuestaId);
-            navigation.navigate("PollDetail", { encuestaId: item.encuestaId });
+            
+            navigation.navigate("Encuestas", {
+                screen: "PollDetail",
+                params: { 
+                    encuestaId: item.encuestaId,
+                    titulo: item.titulo || 'Encuesta'
+                }
+            });
             return;
         }
 

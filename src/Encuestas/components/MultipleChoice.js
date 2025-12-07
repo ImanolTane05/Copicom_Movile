@@ -2,8 +2,21 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons'; 
 
-const MultipleChoice = ({ pregunta, respuestaActual, onToggleOption }) => {
-  const isSelected = (opcion) => Array.isArray(respuestaActual) && respuestaActual.includes(opcion);
+const MultipleChoice = ({ 
+  pregunta, 
+  respuestaActual, 
+  onToggleOption, 
+  multiple = true    // ✅ por defecto múltiple
+}) => {
+
+  // ✅ DETECTA SELECCIÓN CORRECTAMENTE SEGÚN EL TIPO
+  const isSelected = (opcion) => {
+    if (multiple) {
+      return Array.isArray(respuestaActual) && respuestaActual.includes(opcion);
+    } else {
+      return respuestaActual === opcion;
+    }
+  };
 
   return (
     <View style={styles.card}>
@@ -14,6 +27,7 @@ const MultipleChoice = ({ pregunta, respuestaActual, onToggleOption }) => {
 
       {pregunta.opciones.map((opcion) => {
         const selected = isSelected(opcion);
+
         return (
           <TouchableOpacity
             key={opcion}
@@ -21,13 +35,26 @@ const MultipleChoice = ({ pregunta, respuestaActual, onToggleOption }) => {
             onPress={() => onToggleOption(pregunta._id, opcion)}
           >
             <View style={styles.checkboxContainer}>
+              
+              {/* ✅ ICONO CAMBIA SEGÚN TIPO */}
               <Icon 
-                name={selected ? "check-box" : "check-box-outline-blank"} 
-                size={24} 
+                name={
+                  multiple
+                    ? selected 
+                      ? "check-box" 
+                      : "check-box-outline-blank"
+                    : selected
+                      ? "radio-button-checked"
+                      : "radio-button-unchecked"
+                }
+                size={24}
                 color={selected ? "#013D6B" : "#888"} 
               />
-              {/* ✅ CORRECCIÓN: El texto de la opción va dentro de <Text> */}
-              <Text style={[styles.optionText, selected && styles.optionTextSelected]}>
+
+              <Text style={[
+                styles.optionText, 
+                selected && styles.optionTextSelected
+              ]}>
                 {opcion}
               </Text>
             </View>

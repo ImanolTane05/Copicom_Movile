@@ -14,7 +14,7 @@ import * as Notifications from 'expo-notifications';
 
 import { fetchNotifications } from '../api';
 import { loadLocalNotifications, saveLocalNotifications } from '../storage';
-import { getInstallTime } from '../installTime';  // <<< AÑADIDO
+import { getInstallTime } from '../installTime';
 
 /**
  * Convierte fechas a formato "hace X"
@@ -42,7 +42,7 @@ const formatTimeAgo = (dateString) => {
 };
 
 /**
- * NORMALIZACIÓN REAL
+ * NORMALIZACIÓN REAL + IDs PARA NAVEGAR
  */
 const normalizeApiData = (data) => {
     return data.map(n => ({
@@ -50,8 +50,12 @@ const normalizeApiData = (data) => {
         titulo: n.titulo || "Sin título",
         descripcion: n.descripcion || n.mensaje || "Sin mensaje",
         fecha: n.fecha || new Date().toISOString(),
-        tipo: n.tipo || "Alerta",
+        tipo: (n.tipo || "Alerta").toLowerCase(),
         leida: n.leida || false,
+
+        // 🔥 IDs reales para navegar
+        noticiaId: n.noticiaId || n.linkId || null,
+        encuestaId: n.encuestaId || n.linkId || null,
     }));
 };
 
@@ -95,7 +99,6 @@ const NotificationsScreen = () => {
                 const remote = await fetchNotifications();
                 const normalized = normalizeApiData(remote);
 
-                // 🔥 SOLO NOTIFICACIONES NUEVAS (después de instalar)
                 const filtered = normalized.filter(n => {
                     const nf = new Date(n.fecha);
                     return nf >= installTime;
@@ -130,9 +133,9 @@ const NotificationsScreen = () => {
                 titulo: title || data?.titulo || "Nueva alerta",
                 descripcion: body || data?.mensaje || "Mensaje recibido",
                 fecha: new Date().toISOString(),
-                tipo: data?.tipo || "Alerta",
-                noticiaId: data?.noticiaId || null,
-                encuestaId: data?.encuestaId || null,
+                tipo: (data?.type || "alerta").toLowerCase(),
+                noticiaId: data?.id && data?.type === "noticia" ? data.id : null,
+                encuestaId: data?.id && data?.type === "encuesta" ? data.id : null,
                 leida: false,
             };
 
@@ -152,17 +155,21 @@ const NotificationsScreen = () => {
 
         console.log("Presionada:", item);
 
-        if (item.tipo === "Noticia" && item.noticiaId) {
+        const tipo = item.tipo.toLowerCase();
+
+        if (tipo === "noticia" && item.noticiaId) {
+            console.log("➡️ Navegando a noticia:", item.noticiaId);
             navigation.navigate("NewsDetail", { newsId: item.noticiaId });
             return;
         }
 
-        if (item.tipo === "Encuesta" && item.encuestaId) {
+        if (tipo === "encuesta" && item.encuestaId) {
+            console.log("➡️ Navegando a encuesta:", item.encuestaId);
             navigation.navigate("PollDetail", { encuestaId: item.encuestaId });
             return;
         }
 
-        console.log("Tipo sin navegación:", item.tipo);
+        console.log("Tipo sin navegación:", tipo);
     };
 
     /** Render Card */

@@ -1,19 +1,18 @@
-import React, { useEffect } from 'react'; // <-- Importa useEffect
+import React, { useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import TabNavigator from './src/Navigation/TabNavigator';
-import { setupNotifications } from './src/utils/notificationUtils'; // <-- ¡Importa la función de setup!
+import { setupNotifications } from './src/utils/notificationUtils';
+import { navigationRef } from './src/Navigation/navigationRef';
 
 export default function App() {
 
-  // Llama a la función de configuración de notificaciones una sola vez al cargar
   useEffect(() => {
-    console.log("Configurando notificaciones...");
+    console.log("✅ Inicializando sistema de notificaciones...");
     setupNotifications();
-  }, []); // El array vacío asegura que se ejecute solo al montar el componente
+  }, []);
 
   return (
-    <NavigationContainer>
-      {/* TabNavigator contiene las 3 pestañas principales (Noticias, Encuestas, Alertas) */}
+    <NavigationContainer ref={navigationRef}>
       <TabNavigator />
     </NavigationContainer>
   );

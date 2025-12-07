@@ -1,5 +1,4 @@
-// App.js (CORREGIDO)
-import React, { useEffect, useState, useCallback } from 'react'; // Agregamos useState y useCallback
+import React, { useEffect, useState, useCallback } from 'react'; 
 import { NavigationContainer } from '@react-navigation/native';
 import TabNavigator from './src/Navigation/TabNavigator';
 import { setupNotifications } from './src/utils/notificationUtils';

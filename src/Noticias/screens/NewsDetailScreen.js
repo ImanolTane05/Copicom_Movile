@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, ActivityIndicator, Image, Dimensions } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import { fetchNewsDetail } from '../api';
-import RenderHtml from 'react-native-render-html';
+import WebView from 'react-native-webview';
 
+const {height: screenHeight}=Dimensions.get('window');
 const { width } = Dimensions.get('window');
 
 const NewsDetailScreen = ({ navigation }) => {
@@ -12,6 +13,13 @@ const NewsDetailScreen = ({ navigation }) => {
     const [article, setArticle] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [webViewHeight,setWebViewHeight]=useState(screenHeight);
+
+    const injectedJavascript=`window.ReactNativeWebView.postMessage(document.body.scrollHeight);`;
+
+    const onMessage=(event)=>{
+        setWebViewHeight(parseInt(event.nativeEvent.data));
+    }
 
     // --- 🔥 FUNCION PARA LIMPIAR CUERPOS JSON (EditorJS, Lexical, DraftJS) ---
     const parseBodyIfJSON = (body) => {
@@ -53,7 +61,7 @@ const NewsDetailScreen = ({ navigation }) => {
 
                 const cleanedBody = parseBodyIfJSON(data.body);
 
-                setArticle({ ...data, body: cleanedBody });
+                setArticle({ ...data});
 
                 navigation.setOptions({ title: data.title || 'Detalle de Noticia' });
             } catch (err) {
@@ -95,7 +103,7 @@ const NewsDetailScreen = ({ navigation }) => {
         })
         : 'Fecha desconocida';
 
-    const isHTML = article.body?.includes("<p") || article.body?.includes("<div") || article.body?.includes("<h");
+    // const isHTML = article.body?.includes("<p") || article.body?.includes("<div") || article.body?.includes("<h");
 
     return (
         <ScrollView style={styles.container} contentContainerStyle={styles.content}>
@@ -112,16 +120,14 @@ const NewsDetailScreen = ({ navigation }) => {
 
             <Text style={styles.lead}>{article.lead}</Text>
 
-            <View style={styles.bodyContainer}>
-                {isHTML ? (
-                    <RenderHtml
-                        contentWidth={width}
-                        source={{ html: article.body }}
-                        baseStyle={renderConfig.baseStyle}
-                    />
-                ) : (
-                    <Text style={styles.bodyText}>{article.body}</Text>
-                )}
+            <View style={{ width:"100%",height:webViewHeight}}>
+                <WebView 
+                    source={{uri: `https://copycomtlax.netlify.app/noticiabody/${article._id}`}}
+                    injectedJavaScript={injectedJavascript}
+                    onMessage={onMessage}
+                    nestedScrollEnabled={true}
+                    style={{marginTop:20,marginBottom:30}} 
+                />
             </View>
         </ScrollView>
     );
@@ -161,7 +167,12 @@ const styles = StyleSheet.create({
         borderLeftColor: '#00A859',
         paddingLeft: 10,
     },
-    bodyContainer: { marginTop: 10 },
+    bodyContainer: { 
+        flex: 1,
+        backgroundColor: "#e0e0e0",
+        alignItems: "center",
+        justifyContent: "center" 
+    },
     bodyText: {
         fontSize: 16,
         lineHeight: 26,
